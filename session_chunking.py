@@ -58,10 +58,8 @@ def get_files():
                 file_texts.append(f.read())
     return file_texts
 
-if __name__ == "__main__":
-    
 
-
+def session_chunking():
     file_texts = get_files()
 
     print(file_texts)
@@ -85,3 +83,8 @@ if __name__ == "__main__":
             )
             print(f"\n--- Chunk {i} ---")
             print(chunk)
+
+if __name__ == "__main__":
+    
+
+    session_chunking()
