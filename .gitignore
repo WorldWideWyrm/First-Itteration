@@ -16,4 +16,8 @@ pdfs/
 # OS / editor
 .DS_Store
 .vscode/
+<<<<<<< HEAD
 .idea/
+=======
+.idea/
+>>>>>>> 25a0b8ad (Ignore venv and chroma_db)
