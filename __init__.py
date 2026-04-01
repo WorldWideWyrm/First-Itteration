@@ -12,6 +12,7 @@ h=8
 
 
 def softmax(x):
+    x = x - np.max(x, axis=1, keepdims=True)  
     e_x = np.exp(x)
     return e_x / e_x.sum(axis=1, keepdims=True)
 
@@ -63,11 +64,11 @@ def add_norm(tokens_vektors, temp_matric,  eps=1e-6):
 
 
 
-def multiheaded_attention(attention_model, tokens, d_model, h):
+def multiheaded_attention(attention_model, tokens, d_model, h, masked = False):
     wqkv = tokens @ attention_model
     d_k = d_model // h
 
-    # Step 2: split Q, K, V
+    # split Q, K, V
     q, k, v = np.split(wqkv, 3, axis=1)
 
     # split heads
@@ -85,7 +86,15 @@ def multiheaded_attention(attention_model, tokens, d_model, h):
         qi = q[:, i, :]
         ki = k[:, i, :]
         vi = v[:, i, :]
-        outputs.append((softmax((qi@ ki.T)/math.sqrt(d_k)))@vi)
+
+        scores = (qi @ ki.T) / math.sqrt(d_k)
+
+        if masked:
+            mask = np.triu(np.ones(scores.shape), k=1) * -1e9
+            scores += mask
+
+        weights = softmax(scores)
+        outputs.append(weights @ vi)
     return np.concatenate(outputs, axis=1)
 
 def feedfarward(feedfarward_model, tokens_vektors):
@@ -104,6 +113,10 @@ def feedfarward(feedfarward_model, tokens_vektors):
     return output
 
 def output_decifiring(output_tokens, model, input_matrice, d_model, n, h, next_start_pos):
+
+    tokens = positional_encoding(output_tokens, next_start_pos, d_model)
+
+    
     
     return n
     
